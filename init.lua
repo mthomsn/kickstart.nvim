@@ -805,6 +805,87 @@ require('lazy').setup({
     },
   },
 
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    opts = {
+      menu = {
+        width = vim.api.nvim_win_get_width(0) - 4,
+      },
+      settings = {
+        save_on_toggle = true,
+      },
+    },
+    keys = function()
+      local keys = {
+        {
+          '<leader>H',
+          function() require('harpoon'):list():add() end,
+          desc = 'Harpoon File',
+        },
+        {
+          '<leader>hr',
+          function() require('harpoon'):list():remove() end,
+          desc = 'Harpoon Remove Current File',
+        },
+        {
+          '<leader>h',
+          function()
+            local harpoon = require 'harpoon'
+            harpoon.ui:toggle_quick_menu(harpoon:list())
+          end,
+          desc = 'Harpoon Quick Menu',
+        },
+      }
+
+      for i = 1, 9 do
+        table.insert(keys, {
+          '<leader>' .. i,
+          function() require('harpoon'):list():select(i) end,
+          desc = 'Harpoon to File ' .. i,
+        })
+      end
+      return keys
+    end,
+  },
+
+  {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    opts = {
+      toggle = { enabled = true },
+      -- You can enable other snacks features here
+    },
+  },
+
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    opts = {
+      code = {
+        sign = false,
+        width = 'block',
+        right_pad = 1,
+      },
+      heading = {
+        sign = false,
+        icons = {},
+      },
+      checkbox = {
+        enabled = false,
+      },
+    },
+    ft = { 'markdown', 'norg', 'rmd', 'org', 'codecompanion' },
+    config = function(_, opts)
+      require('render-markdown').setup(opts)
+      Snacks.toggle({
+        name = 'Render Markdown',
+        get = require('render-markdown').get,
+        set = require('render-markdown').set,
+      }):map '<leader>um'
+    end,
+  },
+
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -877,7 +958,7 @@ require('lazy').setup({
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
     config = function()
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
       require('nvim-treesitter').install(parsers)
       vim.api.nvim_create_autocmd('FileType', {
         callback = function(args)
